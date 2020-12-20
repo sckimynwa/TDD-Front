@@ -1,14 +1,22 @@
 import { render } from "@testing-library/react";
 import React from "react";
-import * as redux from "react-redux";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
 import { filledList } from "../fixtures/list";
 import ListContainer from "./ListContainer";
 
-describe("List Container Test", () => {
-  jest.spyOn(redux, "useSelector").mockImplementation(() => filledList);
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
 
+describe("List Container Test", () => {
   it("renders list", () => {
-    const { getByText } = render(<ListContainer />);
+    const store = mockStore({ list: filledList });
+    const { getByText } = render(
+      <Provider store={store}>
+        <ListContainer />
+      </Provider>
+    );
     expect(getByText("밥먹기"));
   });
 });
